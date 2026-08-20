@@ -1,0 +1,9 @@
+# Compiled files and build artifacts
+*.o
+*.out
+*.a
+*.so
+*.dylib
+*.exe
+*.app
+*.dSYM/
