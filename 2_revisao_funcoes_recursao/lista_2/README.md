@@ -1,6 +1,8 @@
 # Lista de Exercícios 02
 
-Soluções independentes em C para os dez exercícios da lista.
+Soluções independentes em C para os dez exercícios da lista. Os arquivos contêm
+comentários explicativos e exibem mensagens (`printf`) antes de solicitar as
+entradas.
 
 | Exercício | Arquivo |
 | --- | --- |
@@ -15,24 +17,46 @@ Soluções independentes em C para os dez exercícios da lista.
 | 9. Classificação de triângulo | `09_classifica_triangulo.c` |
 | 10. Mediana | `10_mediana.c` |
 
-## Compilação
+## Build e execução
 
-Na raiz do repositório, compile um arquivo com:
-
-```bash
-gcc -std=c11 -Wall -Wextra -pedantic "2_revisao_funcoes_recursao/lista_2/01_potencia_int.c" -o /tmp/01_potencia
-```
-
-O exercício 10 usa funções matemáticas da biblioteca padrão e pode ser compilado
-com `-lm`:
+Na raiz do repositório, compile o arquivo desejado com:
 
 ```bash
-gcc -std=c11 -Wall -Wextra -pedantic "2_revisao_funcoes_recursao/lista_2/10_mediana.c" -lm -o /tmp/10_mediana
+gcc -std=c11 -Wall -Wextra -pedantic \
+  "2_revisao_funcoes_recursao/lista_2/01_potencia_int.c" \
+  -o /tmp/01_potencia_int
 ```
 
-Os programas leem os dados pela entrada padrão (`stdin`).
+Execute depois o binário criado:
 
-- No exercício 2, informe `capital taxa meses`, como `1000 0.02 12`.
-- No exercício 4, informe os inteiros e finalize com `0`.
-- Nos exercícios 5 e 6, são lidos exatamente 10 valores.
-- Nos exercícios 3 e 4, o vetor possui espaço para até 100 valores.
+```bash
+/tmp/01_potencia_int
+```
+
+Para o exercício 10, inclua `-lm` na compilação:
+
+```bash
+gcc -std=c11 -Wall -Wextra -pedantic \
+  "2_revisao_funcoes_recursao/lista_2/10_mediana.c" \
+  -lm -o /tmp/10_mediana
+/tmp/10_mediana
+```
+
+Para outro exercício, troque o nome do arquivo e do executável. Também é possível
+fornecer as entradas diretamente pelo terminal, usando `printf`:
+
+```bash
+printf "2 3\\n" | /tmp/01_potencia_int
+printf "1000 0.02 12\\n" | /tmp/02_juros_compostos
+printf "1 2 3 0\\n" | /tmp/03_inverte_vetor
+```
+
+## Formato das entradas
+
+- Exercício 1: `a b`, com base real e expoente inteiro não negativo.
+- Exercício 2: `capital taxa meses`, por exemplo `1000 0.02 12`.
+- Exercícios 3 e 4: inteiros até `0`, que encerra a leitura; o vetor suporta até 100 valores.
+- Exercícios 5 e 6: exatamente 10 valores reais.
+- Exercício 7: `n`, os `n` valores ordenados e o valor a inserir.
+- Exercícios 8 e 9: os três lados `A B C`.
+- Exercício 10: o tamanho do vetor seguido dos valores em ordem crescente.

@@ -2,30 +2,48 @@
 
 **DPEE1038 — Estrutura de Dados para Automação**
 
-Cada problema possui um programa independente em C. As funções pedidas ficam no
-próprio arquivo e também há um `main` simples para testar a solução pela entrada
-padrão.
+Cada problema possui um programa independente em C. Os comentários no código
+explicam a lógica das funções e os `printf` indicam ao usuário cada entrada
+solicitada.
 
-| Problema | Arquivo | Entrada do programa de teste |
+| Problema | Arquivo | Entrada solicitada |
 | --- | --- | --- |
-| 1 | `01_potencia_int.c` | `a b` |
-| 2 | `02_existe_vec.c` | `tamanho`, elementos, valor procurado |
-| 3 | `03_insere_em_ordem.c` | `n`, elementos ordenados, `x` |
-| 4 | `04_mediana.c` | `n`, elementos |
+| 1 | `01_potencia_int.c` | base `a` e expoente `b` |
+| 2 | `02_existe_vec.c` | tamanho, elementos e valor procurado |
+| 3 | `03_insere_em_ordem.c` | tamanho, vetor ordenado e valor `x` |
+| 4 | `04_mediana.c` | tamanho e elementos do vetor |
 
-## Compilação
+## Build e execução
 
-Na raiz do repositório:
+Na raiz do repositório, compile um arquivo com `gcc`:
 
 ```bash
-gcc -std=c11 -Wall -Wextra -pedantic 2_revisao_funcoes_recursao/trabalho_2/01_potencia_int.c -lm -o /tmp/potencia
+gcc -std=c11 -Wall -Wextra -pedantic \
+  2_revisao_funcoes_recursao/trabalho_2/01_potencia_int.c \
+  -lm -o /tmp/01_potencia_int
 ```
 
-Substitua o nome do arquivo e do executável para testar os demais problemas.
+Depois execute o programa:
+
+```bash
+/tmp/01_potencia_int
+```
+
+Para compilar e executar qualquer outro exercício, substitua o nome do arquivo
+e do executável. Os exercícios 1 e 4 usam a biblioteca matemática e devem ser
+compilados com `-lm`.
+
+Exemplo com entrada redirecionada:
+
+```bash
+printf "2 8\\n" | /tmp/01_potencia_int
+```
+
+Os programas leem os dados pela entrada padrão (`stdin`).
 
 ## Observações
 
-- `potencia_int` aceita expoentes negativos; nesse caso calcula o inverso da potência.
-- `existe_vec` é recursiva e retorna `1` quando encontra o valor e `0` caso contrário.
-- `insere_em_ordem` recebe um vetor com espaço para `n+1` elementos e desloca os elementos maiores que `x`.
-- `mediana` retorna a mediana quando o vetor está ordenado. Para vetor vazio ou não ordenado, retorna `NAN`; o `main` informa essa situação.
+- `potencia_int` calcula potências recursivamente, inclusive expoentes negativos.
+- `existe_vec` percorre o vetor recursivamente e retorna `1` ou `0`.
+- `insere_em_ordem` recebe espaço para `n+1` elementos e desloca os maiores que `x`.
+- `mediana` retorna a mediana se o vetor estiver ordenado e `NAN` caso contrário ou se estiver vazio.

@@ -1,4 +1,6 @@
 #include <math.h>
+
+/* A verificacao da ordenacao tambem e feita recursivamente. */
 #include <stdio.h>
 
 static int esta_ordenado(const float vetor[], int n) {
@@ -20,10 +22,12 @@ float mediana(const float vetor[], int n) {
 
 int main(void) {
     int n;
+    printf("Informe a quantidade de valores: ");
     if (scanf("%d", &n) != 1 || n < 0)
         return 1;
 
     float vetor[n > 0 ? n : 1];
+    printf("Informe os valores em ordem crescente: ");
     for (int i = 0; i < n; i++)
         if (scanf("%f", &vetor[i]) != 1)
             return 1;
