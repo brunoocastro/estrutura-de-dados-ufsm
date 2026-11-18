@@ -22,21 +22,21 @@ typedef union {
 
 enum Situacao { APROVADO, RECUPERACAO, REPROVADO };
 
-static void mostra_endereco_array(const int vetor[], size_t tamanho) {
+static void mostra_endereco_array(const int array[], size_t tamanho) {
     for (size_t i = 0; i < tamanho; i++)
-        printf("vetor[%zu] = %d | endereco = %p | tamanho = %zu\n",
-               i, vetor[i], (void *)&vetor[i], sizeof(vetor[i]));
+        printf("array[%zu] = %d | endereco = %p | tamanho = %zu\n",
+               i, array[i], (void *)&array[i], sizeof(array[i]));
 }
 
 int main(void) {
     /* Array: elementos do mesmo tipo, em posições contíguas. */
-    int vetor[3] = {10, 20, 30};
+    int array[3] = {10, 20, 30};
     int matriz[2][3] = {{1, 2, 3}, {4, 5, 6}};
 
     printf("=== Array e matriz ===\n");
-    printf("vetor: endereco inicial = %p, tamanho total = %zu\n",
-           (void *)vetor, sizeof(vetor));
-    mostra_endereco_array(vetor, 3);
+    printf("array: endereco inicial = %p, tamanho total = %zu\n",
+           (void *)array, sizeof(array));
+    mostra_endereco_array(array, 3);
     printf("matriz: endereco inicial = %p, tamanho total = %zu\n",
            (void *)matriz, sizeof(matriz));
     printf("matriz[0][0] = %d | endereco = %p\n", matriz[0][0], (void *)&matriz[0][0]);

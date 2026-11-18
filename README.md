@@ -70,3 +70,7 @@ Só quem entende de estruturas de dados é capaz de modelar uma solução ótima
 
 # [Variáveis](0_revisao/variaveis.md)
 # [Estruturas de Controle](0_revisao/estruturas_de_controle.md)
+
+# [Listas encadeadas](6_listas/README.md)
+# [Árvores](7_arvores/README.md)
+# [Grafos](8_grafos/README.md)

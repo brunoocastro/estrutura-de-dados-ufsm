@@ -10,7 +10,7 @@ chamadas.
 | --- | --- |
 | `01_fatorial_passos.c` | descida e subida das chamadas de fatorial |
 | `02_fibonacci_passos.c` | árvore de chamadas com duas chamadas recursivas |
-| `03_soma_vetor.c` | redução recursiva do tamanho de um vetor |
+| `03_soma_array.c` | redução recursiva do tamanho de um array |
 | `04_busca_binaria.c` | descarte recursivo de metade do intervalo |
 | `05_palindromo.c` | comparação recursiva das extremidades de uma string |
 | `06_mdc.c` | algoritmo de Euclides e resto da divisão |
@@ -36,12 +36,12 @@ gcc -std=c11 -Wall -Wextra -pedantic 02_fibonacci_passos.c -o 02_fibonacci_passo
 printf "5\n" | ./02_fibonacci_passos
 ```
 
-Soma recursiva de vetor:
+Soma recursiva de array:
 
 ```bash
 cd 3_revisao_sistematica_c/04_recursao
-gcc -std=c11 -Wall -Wextra -pedantic 03_soma_vetor.c -o 03_soma_vetor
-./03_soma_vetor
+gcc -std=c11 -Wall -Wextra -pedantic 03_soma_array.c -o 03_soma_array
+./03_soma_array
 ```
 
 Busca binária:

@@ -11,7 +11,7 @@ programa independente, com comentários e comandos de compilação no cabeçalho
 | `01_prototipos.c` | declaração, definição, parâmetros e retorno |
 | `02_escopo.c` | escopo local, global e `static` local |
 | `03_valor_ponteiro.c` | passagem por valor e alteração por ponteiro |
-| `04_vetores.c` | funções que recebem e alteram vetores |
+| `04_arrays.c` | funções que recebem e alteram arrays |
 | `05_const.c` | `const` em arrays, strings e parâmetros |
 | `06_recursao.c` | caso base, passo recursivo e pilha de chamadas |
 | `07_funcao_como_dado.c` | ponteiros para função e `typedef` |
@@ -57,7 +57,7 @@ Executar todos, incluindo o exemplo com argumentos:
 
 ```bash
 cd 3_revisao_sistematica_c/03_funcoes
-for executavel in 00_visao_geral 01_prototipos 02_escopo 03_valor_ponteiro 04_vetores 05_const 06_recursao 07_funcao_como_dado; do
+for executavel in 00_visao_geral 01_prototipos 02_escopo 03_valor_ponteiro 04_arrays 05_const 06_recursao 07_funcao_como_dado; do
     echo "=== $executavel ==="
     ./$executavel
 done
@@ -73,7 +73,7 @@ done
   `static` local preserva o valor entre chamadas.
 - **Passagem por valor:** o parâmetro é uma cópia. Para modificar o chamador,
   passe um ponteiro e desreferencie-o com `*`.
-- **Vetores:** ao passá-los a uma função, o array decai para ponteiro; o tamanho
+- **Arrays:** ao passá-los a uma função, o array decai para ponteiro; o tamanho
   deve acompanhar o parâmetro.
 - **`const`:** impede modificações através daquele parâmetro e documenta a
   intenção de somente leitura.

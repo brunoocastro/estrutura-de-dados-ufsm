@@ -1,21 +1,27 @@
 # Tipos compostos de C
 
 Esta pasta mostra como agrupar dados em C, com foco na representação em memória.
-Cada arquivo é um programa independente e possui comentários explicativos.
+Cada arquivo é um programa independente e possui comentários explicativos. As
+explicações teóricas também estão disponíveis em [`arrays.md`](arrays.md),
+[`structs.md`](structs.md) e [`ponteiros.md`](ponteiros.md).
 
 ## Arquivos
 
 | Arquivo | Conteúdo |
 | --- | --- |
 | `00_visao_geral.c` | demonstração geral de arrays, matrizes, strings, structs, unions e enums |
-| `01_vetores.c` | arrays unidimensionais, tamanho explícito e implícito, inicialização e memória contígua |
+| `01_arrays.c` | arrays unidimensionais, tamanho explícito e implícito, inicialização e memória contígua |
+| [`arrays.md`](arrays.md) | teoria de arrays, índices, `sizeof`, memória contígua e funções |
 | `02_matrizes.c` | arrays multidimensionais, dimensões, índices e ordem de linhas |
 | `03_strings.c` | arrays de `char`, `\\0`, `strlen`, `sizeof` e literais de string |
 | `03_strings_maiores.c` | `fgets`, buffers maiores, cópia/concatenação seguras, busca e capacidade |
 | `04_structs.c` | formas de declaração, campos heterogêneos, `typedef`, padding, alinhamento e `offsetof` |
+| [`structs.md`](structs.md) | teoria de structs, declarações, memória, padding, cópia e funções |
+| [`ponteiros.md`](ponteiros.md) | resumo de endereços, desreferência, arrays, `const` e memória dinâmica |
 | `05_unions.c` | formas de declaração, membros compartilhando a mesma região de memória e sobrescrita |
 | `06_enums.c` | formas de declaração, tags, `typedef` e valores automáticos |
 | `07_structs_aninhadas.c` | structs compostas, structs dentro de structs, acesso e memória |
+| `08_ponteiros.c` | valores, endereços, desreferência, arrays, structs, `NULL` e `malloc` |
 
 ## Como usar o GCC
 
@@ -45,8 +51,8 @@ de executar o programa.
 Exemplo completo:
 
 ```bash
-gcc -std=c11 -Wall -Wextra -pedantic 01_vetores.c -o 01_vetores
-./01_vetores
+gcc -std=c11 -Wall -Wextra -pedantic 01_arrays.c -o 01_arrays
+./01_arrays
 ```
 
 O primeiro comando compila; o segundo executa. O prefixo `./` informa ao shell
@@ -58,8 +64,8 @@ Na raiz do repositório, copie e cole o bloco desejado:
 
 ```bash
 cd 3_revisao_sistematica_c/02_tipos_compostos
-gcc -std=c11 -Wall -Wextra -pedantic 01_vetores.c -o 01_vetores
-./01_vetores
+gcc -std=c11 -Wall -Wextra -pedantic 01_arrays.c -o 01_arrays
+./01_arrays
 ```
 
 ```bash
@@ -102,6 +108,14 @@ gcc -std=c11 -Wall -Wextra -pedantic 06_enums.c -o 06_enums
 ./06_enums
 ```
 
+Exemplo completo de ponteiros:
+
+```bash
+cd 3_revisao_sistematica_c/02_tipos_compostos
+gcc -std=c11 -Wall -Wextra -pedantic 08_ponteiros.c -o 08_ponteiros
+./08_ponteiros
+```
+
 ## Compilar todos
 
 ```bash
@@ -116,7 +130,7 @@ O comando também compila `00_visao_geral.c`. Para executar tudo:
 
 ```bash
 cd 3_revisao_sistematica_c/02_tipos_compostos
-for executavel in 00_visao_geral 01_vetores 02_matrizes 03_strings 03_strings_maiores 04_structs 05_unions 06_enums 07_structs_aninhadas; do
+for executavel in 00_visao_geral 01_arrays 02_matrizes 03_strings 03_strings_maiores 04_structs 05_unions 06_enums 07_structs_aninhadas 08_ponteiros; do
     echo "=== $executavel ==="
     ./$executavel
 done
@@ -124,9 +138,9 @@ done
 
 ## Pontos importantes
 
-### Vetores
+### Arrays
 
-Um vetor é um conjunto de elementos do mesmo tipo armazenados contiguamente.
+Um array é um conjunto de elementos do mesmo tipo armazenados contiguamente.
 Em `int v[5]`, o tamanho é explícito: existem exatamente cinco elementos.
 Em `int v[] = {1, 2, 3}`, o compilador infere o tamanho como três.
 
@@ -136,7 +150,7 @@ A capacidade total pode ser calculada enquanto o objeto ainda é um array:
 size_t n = sizeof v / sizeof v[0];
 ```
 
-O primeiro índice é `0` e o último é `n - 1`. Acessar `v[n]` ultrapassa o vetor
+O primeiro índice é `0` e o último é `n - 1`. Acessar `v[n]` ultrapassa o array
 e produz comportamento indefinido. Arrays locais têm tamanho fixo; para tamanhos
 variáveis, estudaremos alocação dinâmica com ponteiros e `malloc`.
 

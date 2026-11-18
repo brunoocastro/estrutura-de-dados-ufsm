@@ -10,7 +10,7 @@ vários exemplos independentes e um README próprio.
 | `01_tipos_simples/` | tipos básicos, modificadores, memória, conversões e constantes |
 | `02_tipos_compostos/` | arrays, matrizes, strings, `struct`, `union` e `enum` |
 | `03_funcoes/` | protótipos, escopo, passagem por valor e ponteiros |
-| `04_recursao/` | casos base, rastreamento de chamadas, vetores, busca e algoritmos recursivos |
+| `04_recursao/` | casos base, rastreamento de chamadas, arrays, busca e algoritmos recursivos |
 
 ## Começar pelos tipos simples
 
@@ -51,8 +51,11 @@ cd 3_revisao_sistematica_c/02_tipos_compostos
 cat README.md
 ```
 
-Consulte `02_tipos_compostos/README.md` para os comandos e explicações de vetores,
-matrizes, strings, structs, unions e enums.
+Consulte `02_tipos_compostos/README.md` para os comandos e explicações de arrays,
+matrizes, strings, structs, unions e enums. As explicações específicas estão em
+[`arrays.md`](02_tipos_compostos/arrays.md) e
+[`structs.md`](02_tipos_compostos/structs.md) e
+[`ponteiros.md`](02_tipos_compostos/ponteiros.md).
 
 Todos os READMEs explicam o uso do `gcc` e das opções `-std=c11`, `-Wall`,
 `-Wextra`, `-pedantic` e `-o`.
@@ -67,7 +70,7 @@ cat README.md
 ```
 
 Consulte `03_funcoes/README.md` para exemplos de protótipos, escopo, ponteiros,
-vetores, `const`, recursão, ponteiros para função e argumentos da linha de comando.
+arrays, `const`, recursão, ponteiros para função e argumentos da linha de comando.
 
 Para estudar exclusivamente recursão:
 
@@ -77,7 +80,7 @@ cat README.md
 ```
 
 A pasta `04_recursao/` contém rastreamentos detalhados de fatorial, Fibonacci,
-soma de vetor, busca binária, palíndromos e MDC.
+soma de array, busca binária, palíndromos e MDC.
 
 ## Demais assuntos
 
