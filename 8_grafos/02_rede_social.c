@@ -100,32 +100,43 @@ void mostra_em_comum(const Rede *r, const char *a, const char *b) {
     printf("\n");
 }
 
-/* Sugestões = pessoas a distância 2 (amigos de amigos que ainda não são amigos). */
+/*
+ * Sugestões de amizade ("Pessoas que você talvez conheça"):
+ * Percorre os amigos de `p` (distância 1) e depois os amigos desses amigos
+ * (distância 2), contando quantos amigos em comum cada candidato possui.
+ */
 void sugere_amizades(const Rede *r, const char *nome) {
     int p = indice(r, nome);
     int comuns[MAX_PESSOAS] = {0};
     for (const Amizade *x = r->amigos[p]; x != NULL; x = x->proxima) {
         for (const Amizade *y = r->amigos[x->amigo]; y != NULL; y = y->proxima) {
-            if (y->amigo != p && !sao_amigos(r, p, y->amigo)) comuns[y->amigo]++;
+            /* Ignora a própria pessoa `p` e quem já é amigo direto de `p` */
+            if (y->amigo != p && !sao_amigos(r, p, y->amigo)) {
+                comuns[y->amigo]++;
+            }
         }
     }
     printf("Sugestoes para %s:", nome);
     bool alguma = false;
-    for (;;) {   /* imprime em ordem decrescente de amigos em comum */
+    for (;;) {   /* Seleciona repetidamente o candidato com mais amigos em comum */
         int melhor = -1;
         for (int i = 0; i < r->n; i++) {
             if (comuns[i] > 0 && (melhor < 0 || comuns[i] > comuns[melhor])) melhor = i;
         }
         if (melhor < 0) break;
         printf(" %s (%d em comum)", r->nome[melhor], comuns[melhor]);
-        comuns[melhor] = 0;
+        comuns[melhor] = 0; /* Zera para não imprimir o mesmo candidato novamente */
         alguma = true;
     }
     if (!alguma) printf(" nenhuma");
     printf("\n");
 }
 
-/* BFS a partir de `origem`: dist = número de amizades até cada pessoa. */
+/*
+ * BFS a partir de `origem`:
+ *   - dist[i] guarda o grau de separação (menor nº de amizades até `i`)
+ *   - pai[i] guarda quem apresentou quem no caminho mais curto
+ */
 static void bfs(const Rede *r, int origem, int dist[], int pai[]) {
     int fila[MAX_PESSOAS], ini = 0, fim = 0;
     for (int i = 0; i < r->n; i++) { dist[i] = -1; pai[i] = -1; }
@@ -134,6 +145,7 @@ static void bfs(const Rede *r, int origem, int dist[], int pai[]) {
     while (ini < fim) {
         int u = fila[ini++];
         for (const Amizade *x = r->amigos[u]; x != NULL; x = x->proxima) {
+            /* Só enfileira se `dist < 0` (ainda não visitado) para não travar nos ciclos */
             if (dist[x->amigo] < 0) {
                 dist[x->amigo] = dist[u] + 1;
                 pai[x->amigo] = u;
@@ -152,6 +164,7 @@ void grau_de_separacao(const Rede *r, const char *a, const char *b) {
         printf("nao conectados\n");
         return;
     }
+    /* Reconstrói a cadeia de amizades do destino `j` de volta até a origem `i` */
     for (int v = j; v != -1; v = pai[v]) cadeia[k++] = v;
     printf("%d grau(s): ", dist[j]);
     while (k > 0) {
@@ -160,13 +173,18 @@ void grau_de_separacao(const Rede *r, const char *a, const char *b) {
     }
 }
 
+/*
+ * Descobre grupos isolados (componentes conexas):
+ * Roda uma BFS para cada pessoa ainda não vista; todos os alcançáveis a partir
+ * dela (`dist[j] >= 0`) pertencem ao mesmo grupo conectado.
+ */
 void grupos(const Rede *r) {
     int dist[MAX_PESSOAS], pai[MAX_PESSOAS];
     bool visto[MAX_PESSOAS] = {false};
     int g = 0;
     printf("Grupos (componentes conexas):\n");
     for (int i = 0; i < r->n; i++) {
-        if (visto[i]) continue;
+        if (visto[i]) continue; /* Já pertence a um grupo impresso anteriormente */
         bfs(r, i, dist, pai);
         printf("  grupo %d:", ++g);
         for (int j = 0; j < r->n; j++) {
@@ -175,7 +193,6 @@ void grupos(const Rede *r) {
         printf("\n");
     }
 }
-
 void mais_popular(const Rede *r) {
     int melhor = 0;
     for (int i = 1; i < r->n; i++) {

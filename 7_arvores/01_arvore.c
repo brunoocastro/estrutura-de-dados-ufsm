@@ -9,18 +9,19 @@
 #include <stdlib.h>
 
 typedef struct No {
-    int valor;
-    struct No *primeiro_filho;
-    struct No *proximo_irmao;
+    int valor;                 /* Dado armazenado no nó                           */
+    struct No *primeiro_filho; /* Aponta para o 1º filho (desce um nível)         */
+    struct No *proximo_irmao;  /* Aponta para o irmão seguinte (mesmo nível/pai)  */
 } No;
 
 No *cria_no(int valor) {
-    No *no = malloc(sizeof *no);
-    if (no == NULL) {
+    No *no = malloc(sizeof *no); /* Aloca dinamicamente no heap um novo nó */
+    if (no == NULL) {            /* Sempre verifica se havia memória disponível */
         fprintf(stderr, "Falha de alocacao\n");
         exit(EXIT_FAILURE);
     }
     no->valor = valor;
+    /* Inicializa os ponteiros com NULL pois o nó nasce sem filhos e sem irmãos */
     no->primeiro_filho = NULL;
     no->proximo_irmao = NULL;
     return no;
@@ -29,30 +30,37 @@ No *cria_no(int valor) {
 /* Adiciona `filho` como último filho de `pai`. Retorna o próprio filho. */
 No *adiciona_filho(No *pai, No *filho) {
     if (pai->primeiro_filho == NULL) {
+        /* Caso 1: O pai ainda não tinha nenhum filho; este passa a ser o 1º */
         pai->primeiro_filho = filho;
     } else {
+        /* Caso 2: Já existem filhos; percorre a lista de irmãos até o último */
         No *irmao = pai->primeiro_filho;
         while (irmao->proximo_irmao != NULL) {
-            irmao = irmao->proximo_irmao;
+            irmao = irmao->proximo_irmao; /* Avança lateralmente pelos irmãos */
         }
-        irmao->proximo_irmao = filho;
+        irmao->proximo_irmao = filho; /* Engancha o novo filho no final da fila */
     }
     return filho;
 }
 
 /* Imprime a árvore com indentação proporcional à profundidade (pré-ordem). */
 void imprime(const No *no, int profundidade) {
-    if (no == NULL) return;
+    if (no == NULL) return; /* Caso base da recursão: subárvore vazia */
+
+    /* 1º Visita a raiz atual (Pré-Ordem: pai é impresso antes dos filhos) */
     for (int i = 0; i < profundidade; i++) printf("  ");
     printf("%d\n", no->valor);
+
+    /* 2º Percorre a lista encadeada de filhos, aumentando a profundidade em +1 */
     for (const No *f = no->primeiro_filho; f != NULL; f = f->proximo_irmao) {
         imprime(f, profundidade + 1);
     }
 }
 
 int conta_nos(const No *no) {
-    if (no == NULL) return 0;
-    int total = 1;
+    if (no == NULL) return 0; /* Árvore vazia tem 0 nós */
+    int total = 1;            /* Conta o próprio nó atual (1) */
+    /* Soma recursivamente a quantidade de nós de cada subárvore filha */
     for (const No *f = no->primeiro_filho; f != NULL; f = f->proximo_irmao) {
         total += conta_nos(f);
     }
@@ -61,8 +69,11 @@ int conta_nos(const No *no) {
 
 int conta_folhas(const No *no) {
     if (no == NULL) return 0;
+    /* Se não tem primeiro_filho, este nó não possui descendentes: é uma folha! */
     if (no->primeiro_filho == NULL) return 1;
+
     int total = 0;
+    /* Se não é folha, delega a contagem para todas as subárvores filhas */
     for (const No *f = no->primeiro_filho; f != NULL; f = f->proximo_irmao) {
         total += conta_folhas(f);
     }
@@ -71,39 +82,44 @@ int conta_folhas(const No *no) {
 
 /* Altura = número de arestas no caminho mais longo da raiz até uma folha. */
 int altura(const No *no) {
-    if (no == NULL) return -1;
-    int maior = -1;
+    if (no == NULL) return -1; /* Convenção: árvore vazia tem altura -1 */
+    int maior = -1;            /* Guarda a maior altura encontrada entre os filhos */
     for (const No *f = no->primeiro_filho; f != NULL; f = f->proximo_irmao) {
-        int h = altura(f);
+        int h = altura(f);     /* Calcula a altura da subárvore filha (Pós-Ordem) */
         if (h > maior) maior = h;
     }
+    /* A altura do pai é 1 aresta + a maior altura entre seus filhos (folha dá 0) */
     return maior + 1;
 }
 
-/* Grau = número de filhos do nó. */
+/* Grau = número de filhos diretos do nó. */
 int grau(const No *no) {
     int g = 0;
+    /* Basta contar quantos elementos existem na lista de irmãos do 1º filho */
     for (const No *f = no->primeiro_filho; f != NULL; f = f->proximo_irmao) g++;
     return g;
 }
 
 const No *busca(const No *no, int valor) {
-    if (no == NULL) return NULL;
-    if (no->valor == valor) return no;
+    if (no == NULL) return NULL;        /* Fim do ramo: não achou aqui */
+    if (no->valor == valor) return no;  /* Encontrou no próprio nó atual! */
+
+    /* Como não há regra de ordenação na árvore genérica, busca em cada filho */
     for (const No *f = no->primeiro_filho; f != NULL; f = f->proximo_irmao) {
         const No *achou = busca(f, valor);
-        if (achou != NULL) return achou;
+        if (achou != NULL) return achou; /* Interrompe assim que encontrar */
     }
-    return NULL;
+    return NULL; /* Percorreu todos os filhos e não encontrou */
 }
 
 /* Libera em pós-ordem: filhos antes do pai. */
 void libera(No *no) {
     while (no != NULL) {
+        /* Salva o ponteiro para o irmão ANTES de dar free(no), senão perderíamos o endereço! */
         No *irmao = no->proximo_irmao;
-        libera(no->primeiro_filho);
-        free(no);
-        no = irmao;
+        libera(no->primeiro_filho); /* 1º Libera recursivamente todos os descendentes */
+        free(no);                   /* 2º Só agora libera o nó atual com segurança     */
+        no = irmao;                 /* 3º Avança para o próximo irmão do mesmo nível   */
     }
 }
 

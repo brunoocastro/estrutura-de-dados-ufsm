@@ -169,3 +169,15 @@ printf 'Ana;Bia\nCarlos;Bia\nBia;Duda\nEdu;Duda\nDuda;Fabi\n\nFabi\n\n' | /tmp/0
 ```
 
 A terceira parte da tarefa (mapa rodoviário) é um problema de grafos e está em [`8_grafos/03_t06_mapa_rodoviario.c`](../8_grafos/03_t06_mapa_rodoviario.c).
+
+## Aplicação em Engenharia de Controle e Automação: [`05_automacao_scada.c`](05_automacao_scada.c)
+
+Modela a hierarquia de ativos de uma planta segundo a norma ISA-95 / endereçamento OPC-UA (`Planta -> Área -> CLP -> Sensores/Atuadores`) usando árvore genérica (`primeiro_filho` / `proximo_irmao`):
+
+- **Pré-ordem**: exibe a árvore de ativos do supervisório SCADA com o estado (`ON`/`OFF`) e consumo.
+- **Pós-ordem**: calcula a potência elétrica total (W) somando os equipamentos filhos antes da área/CLP pai e executa o desligamento seguro em cascata quando o disjuntor da `Area_Envase` desarma.
+
+```bash
+gcc -std=c11 -Wall -Wextra -pedantic 7_arvores/05_automacao_scada.c -o /tmp/05_automacao_scada
+/tmp/05_automacao_scada
+```

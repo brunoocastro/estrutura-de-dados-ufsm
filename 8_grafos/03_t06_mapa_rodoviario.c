@@ -58,31 +58,39 @@ static void monta_mapa(void) {
 }
 
 /*
- * Dijkstra: a cada passo fixa o vértice não visitado de menor distância e
- * relaxa as arestas que saem dele. Com matriz de adjacência custa O(n²).
+ * Algoritmo de Dijkstra: calcula a rota de menor quilometragem a partir de
+ * `origem` até todas as demais localidades.
+ *
+ * Por que não usar BFS aqui?
+ *   Porque a BFS minimiza apenas a quantidade de trechos (paradas), enquanto
+ *   Dijkstra soma os pesos reais (km) das estradas.
  */
 static void dijkstra(int origem, int dist[N], int anterior[N]) {
-    bool fixado[N] = {false};
+    bool fixado[N] = {false}; /* true quando a menor distância até v já é final */
     for (int v = 0; v < N; v++) { dist[v] = INFINITO; anterior[v] = -1; }
     dist[origem] = 0;
 
     for (int passo = 0; passo < N; passo++) {
+        /* 1. Escolhe o vértice ainda aberto (`!fixado[v]`) mais próximo */
         int u = -1;
         for (int v = 0; v < N; v++) {
             if (!fixado[v] && dist[v] != INFINITO && (u < 0 || dist[v] < dist[u])) u = v;
         }
-        if (u < 0) break;   /* restantes são inalcançáveis */
+        if (u < 0) break;   /* vértices restantes são inalcançáveis */
         fixado[u] = true;
+
+        /* 2. Relaxamento: verifica se passar por `u` encurta o caminho até `v` */
         for (int v = 0; v < N; v++) {
             int km = distancia[u][v];
             if (km != SEM_ARESTA && !fixado[v] && dist[u] + km < dist[v]) {
                 dist[v] = dist[u] + km;
-                anterior[v] = u;
+                anterior[v] = u; /* guarda de onde viemos para reconstruir a rota */
             }
         }
     }
 }
 
+/* Reconstrói o caminho seguindo `anterior[]` do destino de volta até a origem. */
 static void imprime_rota(int destino, const int anterior[N]) {
     int rota[N], k = 0;
     for (int v = destino; v != -1; v = anterior[v]) rota[k++] = v;

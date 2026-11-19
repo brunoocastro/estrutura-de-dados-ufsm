@@ -88,9 +88,13 @@ static void anexa(Elo **lista, Pessoa *p) {
     *lista = novo;
 }
 
-/* Verdadeiro se `alvo` é `p` ou um ascendente de `p`. */
+/*
+ * Verifica recursivamente se `alvo` é a própria pessoa `p` ou se já está
+ * acima de `p` (progenitor, avô, bisavô...). Isso impede que um descendente
+ * seja cadastrado como progenitor do seu próprio ancestral (o que criaria ciclo!).
+ */
 static int eh_ascendente_ou_igual(const Pessoa *p, const Pessoa *alvo) {
-    if (p == alvo) return 1;
+    if (p == alvo) return 1; /* Encontrou `alvo` subindo pelos progenitores! */
     for (const Elo *e = p->progenitores; e != NULL; e = e->proximo) {
         if (eh_ascendente_ou_igual(e->pessoa, alvo)) return 1;
     }
@@ -105,22 +109,30 @@ const char *adiciona_relacao(Arvore *arv, const char *nome_prog, const char *nom
     if (contem(prog->filhos, filho)) return "relacao ja cadastrada";
     /* Se o filho já é ascendente do progenitor, a relação criaria um ciclo. */
     if (eh_ascendente_ou_igual(prog, filho)) return "relacao criaria um ciclo";
+
+    /* Liga nos dois sentidos: para descer (filhos) e para subir (progenitores) */
     anexa(&prog->filhos, filho);
     anexa(&filho->progenitores, prog);
     return NULL;
 }
 
-/* Imprime os ascendentes subindo geração por geração (recursivo). */
+/*
+ * Imprime os ascendentes subindo geração por geração (recursivo).
+ * Como na genealogia real uma pessoa tem múltiplos progenitores (Grafo DAG),
+ * dois caminhos diferentes podem chegar ao mesmo ancestral; o campo `a->marca`
+ * funciona como o vetor `visitado[]` para não imprimir ninguém duas vezes!
+ */
 static int imprime_ascendentes_rec(const Pessoa *p, unsigned marca, int geracao) {
     int total = 0;
     for (const Elo *e = p->progenitores; e != NULL; e = e->proximo) {
         Pessoa *a = e->pessoa;
-        if (a->marca == marca) continue;
-        a->marca = marca;
+        if (a->marca == marca) continue; /* Já foi visitado nesta consulta! */
+        a->marca = marca;                /* Marca como visitado nesta consulta */
         printf("    %s (%s)\n", a->nome,
                geracao == 1 ? "progenitor" :
                geracao == 2 ? "avo" : "ascendente distante");
         total++;
+        /* Sobe mais um nível na ancestralidade (geracao + 1) */
         total += imprime_ascendentes_rec(a, marca, geracao + 1);
     }
     return total;
@@ -128,6 +140,7 @@ static int imprime_ascendentes_rec(const Pessoa *p, unsigned marca, int geracao)
 
 void imprime_ascendentes(Arvore *arv, const Pessoa *p) {
     printf("  %s:\n", p->nome);
+    /* Incrementa `consulta_atual` para gerar um identificador de visita único */
     if (imprime_ascendentes_rec(p, ++arv->consulta_atual, 1) == 0) {
         printf("    (nenhum ascendente cadastrado)\n");
     }

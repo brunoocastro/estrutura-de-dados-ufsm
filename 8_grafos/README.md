@@ -133,3 +133,15 @@ gcc -std=c11 -Wall -Wextra -pedantic 8_grafos/03_t06_mapa_rodoviario.c -o /tmp/m
 /tmp/mapa                                  # Santa Maria -> todas as cidades
 /tmp/mapa "Restinga Seca" "Nova Palma"     # rota entre duas cidades (60 km)
 ```
+
+## Aplicação em Engenharia de Controle e Automação: [`04_automacao_agv_profinet.c`](04_automacao_agv_profinet.c)
+
+Modela a topologia de chão de fábrica como **grafo não dirigido ponderado** para resolver dois problemas de redundância em automação industrial:
+
+- **Rede PROFINET em Anel (BFS)**: encontra a rota com menor número de saltos entre CLPs e redireciona automaticamente pelo outro lado do anel quando o cabo direto se rompe.
+- **Navegação de Robô Móvel AGV (Dijkstra)**: calcula a trajetória de menor tempo (em segundos) entre a Doca e a Célula de Montagem e recalcula o desvio ótimo pelo Pátio Sul quando o Corredor Norte é interditado.
+
+```bash
+gcc -std=c11 -Wall -Wextra -pedantic 8_grafos/04_automacao_agv_profinet.c -o /tmp/04_automacao_agv_profinet
+/tmp/04_automacao_agv_profinet
+```

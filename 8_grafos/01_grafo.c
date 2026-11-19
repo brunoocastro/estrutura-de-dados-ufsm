@@ -40,6 +40,7 @@ Grafo cria_grafo(int n, bool dirigido) {
 
 static bool valido(const Grafo *g, int v) { return v >= 0 && v < g->n; }
 
+/* Percorre a lista encadeada de `u` para verificar se `v` já é vizinho. */
 bool existe_aresta(const Grafo *g, int u, int v) {
     if (!valido(g, u) || !valido(g, v)) return false;
     for (const Adj *a = g->lista[u]; a != NULL; a = a->proximo) {
@@ -48,27 +49,36 @@ bool existe_aresta(const Grafo *g, int u, int v) {
     return false;
 }
 
+/* Insere o vizinho `v` no início da lista encadeada em O(1). */
 static void empilha_adj(Adj **lista, int v) {
     Adj *novo = aloca(1, sizeof *novo);
     novo->vertice = v;
-    novo->proximo = *lista;
-    *lista = novo;
+    novo->proximo = *lista; /* O novo nó aponta para o antigo primeiro da lista */
+    *lista = novo;          /* O início da lista passa a apontar para o novo nó */
 }
 
-/* Grafo simples: sem laços (u-u) e sem arestas repetidas. */
+/* Grafo simples: rejeita laços (u == v) e arestas repetidas. */
 bool insere_aresta(Grafo *g, int u, int v) {
     if (!valido(g, u) || !valido(g, v) || u == v || existe_aresta(g, u, v)) return false;
-    empilha_adj(&g->lista[u], v);
-    if (!g->dirigido) empilha_adj(&g->lista[v], u);
+    empilha_adj(&g->lista[u], v); /* Cria a ligação u -> v */
+    if (!g->dirigido) {
+        /* Se o grafo é não dirigido (mão dupla), também cria a volta v -> u */
+        empilha_adj(&g->lista[v], u);
+    }
     return true;
 }
 
+/*
+ * Remove o vértice `v` da lista encadeada.
+ * Usa ponteiro para ponteiro (`Adj **lista`) para religar diretamente o
+ * ponteiro anterior sem precisar guardar variável `anterior` separada.
+ */
 static bool remove_adj(Adj **lista, int v) {
     for (; *lista != NULL; lista = &(*lista)->proximo) {
         if ((*lista)->vertice == v) {
-            Adj *alvo = *lista;
-            *lista = alvo->proximo;
-            free(alvo);
+            Adj *alvo = *lista;     /* Guarda o nó que será removido       */
+            *lista = alvo->proximo; /* Pula o nó removido na lista         */
+            free(alvo);             /* Devolve a memória do nó para o heap */
             return true;
         }
     }
@@ -77,10 +87,14 @@ static bool remove_adj(Adj **lista, int v) {
 
 bool remove_aresta(Grafo *g, int u, int v) {
     if (!valido(g, u) || !valido(g, v) || !remove_adj(&g->lista[u], v)) return false;
-    if (!g->dirigido) remove_adj(&g->lista[v], u);
+    if (!g->dirigido) {
+        /* Em grafo não dirigido, remove também a entrada espelhada em `lista[v]` */
+        remove_adj(&g->lista[v], u);
+    }
     return true;
 }
 
+/* Grau = quantidade de arestas ligadas ao vértice `v`. */
 int grau(const Grafo *g, int v) {
     int d = 0;
     for (const Adj *a = g->lista[v]; a != NULL; a = a->proximo) d++;
@@ -96,39 +110,53 @@ void imprime(const Grafo *g) {
 }
 
 /*
- * BFS: visita por camadas usando uma fila. Preenche dist[] (arestas desde a
- * origem, -1 se inalcançável) e pai[] (antecessor no caminho mínimo).
+ * Busca em Largura (BFS): visita por camadas (distância 0, 1, 2...) usando FILA.
+ * Preenche:
+ *   - dist[v]: menor número de arestas da origem até v (-1 = não visitado)
+ *   - pai[v]:  por qual vértice chegamos a v (permite reconstruir o caminho)
  */
 void bfs(const Grafo *g, int origem, int dist[], int pai[], bool imprimir) {
     int *fila = aloca((size_t)g->n, sizeof(int));
     int ini = 0, fim = 0;
+    /* Inicializa todos com dist = -1 (funciona como visitado[v] == false) */
     for (int v = 0; v < g->n; v++) { dist[v] = -1; pai[v] = -1; }
-    dist[origem] = 0;
-    fila[fim++] = origem;
+
+    dist[origem] = 0;      /* A origem está a 0 arestas dela mesma */
+    fila[fim++] = origem;  /* Enfileira a origem para iniciar as ondas */
+
     while (ini < fim) {
-        int u = fila[ini++];
+        int u = fila[ini++]; /* Retira o vértice mais antigo da fila (FIFO) */
         if (imprimir) printf(" %d", u);
+
+        /* Inspeciona todos os vizinhos de `u` */
         for (const Adj *a = g->lista[u]; a != NULL; a = a->proximo) {
+            /* Só visita se `dist == -1` (evita entrar em loop infinito nos ciclos!) */
             if (dist[a->vertice] == -1) {
-                dist[a->vertice] = dist[u] + 1;
-                pai[a->vertice] = u;
-                fila[fim++] = a->vertice;
+                dist[a->vertice] = dist[u] + 1; /* Camada seguinte (+1 aresta) */
+                pai[a->vertice] = u;            /* Registra quem descobriu este vértice */
+                fila[fim++] = a->vertice;       /* Enfileira para expandir seus vizinhos depois */
             }
         }
     }
     free(fila);
 }
 
+/*
+ * Busca em Profundidade (DFS): mergulha recursivamente o mais fundo possível
+ * antes de retroceder (backtracking). Obrigatório marcar `visitado[u] = true`!
+ */
 static void dfs_rec(const Grafo *g, int u, bool visitado[]) {
-    visitado[u] = true;
+    visitado[u] = true; /* Marca imediatamente ao entrar para evitar loop em ciclos */
     printf(" %d", u);
     for (const Adj *a = g->lista[u]; a != NULL; a = a->proximo) {
-        if (!visitado[a->vertice]) dfs_rec(g, a->vertice, visitado);
+        if (!visitado[a->vertice]) {
+            dfs_rec(g, a->vertice, visitado); /* Mergulha no primeiro vizinho não visitado */
+        }
     }
 }
 
 void dfs(const Grafo *g, int origem) {
-    bool *visitado = aloca((size_t)g->n, sizeof(bool));
+    bool *visitado = aloca((size_t)g->n, sizeof(bool)); /* calloc já zera para false */
     dfs_rec(g, origem, visitado);
     free(visitado);
 }
@@ -136,11 +164,12 @@ void dfs(const Grafo *g, int origem) {
 void imprime_caminho(const Grafo *g, int origem, int destino) {
     int *dist = aloca((size_t)g->n, sizeof(int));
     int *pai = aloca((size_t)g->n, sizeof(int));
-    bfs(g, origem, dist, pai, false);
+    bfs(g, origem, dist, pai, false); /* Calcula distâncias e pais a partir da origem */
     printf("Caminho %d -> %d: ", origem, destino);
     if (dist[destino] == -1) {
         printf("inexistente\n");
     } else {
+        /* Segue os ponteiros `pai[]` do destino até a origem e imprime invertido */
         int *caminho = aloca((size_t)g->n, sizeof(int));
         int k = 0;
         for (int v = destino; v != -1; v = pai[v]) caminho[k++] = v;
@@ -155,13 +184,18 @@ void imprime_caminho(const Grafo *g, int origem, int destino) {
     free(pai);
 }
 
-/* Ciclo em grafo não dirigido: DFS que encontra vizinho visitado que não é o pai. */
+/*
+ * Detecção de ciclo em grafo não dirigido usando DFS:
+ * Se a busca encontrar um vizinho `a->vertice` que JÁ FOI VISITADO e que
+ * NÃO É o próprio `pai` imediato de onde acabamos de vir, existe um ciclo!
+ */
 static bool ciclo_rec(const Grafo *g, int u, int pai, bool visitado[]) {
     visitado[u] = true;
     for (const Adj *a = g->lista[u]; a != NULL; a = a->proximo) {
         if (!visitado[a->vertice]) {
             if (ciclo_rec(g, a->vertice, u, visitado)) return true;
         } else if (a->vertice != pai) {
+            /* Achou aresta de retorno para um vértice antigo: fechou um ciclo! */
             return true;
         }
     }
@@ -171,6 +205,7 @@ static bool ciclo_rec(const Grafo *g, int u, int pai, bool visitado[]) {
 bool tem_ciclo(const Grafo *g) {
     bool *visitado = aloca((size_t)g->n, sizeof(bool));
     bool achou = false;
+    /* Testa todos os vértices para cobrir também componentes desconexas */
     for (int v = 0; v < g->n && !achou; v++) {
         if (!visitado[v]) achou = ciclo_rec(g, v, -1, visitado);
     }
@@ -180,6 +215,7 @@ bool tem_ciclo(const Grafo *g) {
 
 void libera_grafo(Grafo *g) {
     for (int v = 0; v < g->n; v++) {
+        /* Esvazia cada lista encadeada de vizinhos antes de liberar o vetor */
         while (g->lista[v] != NULL) remove_adj(&g->lista[v], g->lista[v]->vertice);
     }
     free(g->lista);
