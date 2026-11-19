@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/brunocastro/www/personal/mestrado/estrutura_de_dados_para_engenharia/build/01_revisao_c_basico/lista_01/03_operacoes_tres_inteiros'
+relocations:     []
+...

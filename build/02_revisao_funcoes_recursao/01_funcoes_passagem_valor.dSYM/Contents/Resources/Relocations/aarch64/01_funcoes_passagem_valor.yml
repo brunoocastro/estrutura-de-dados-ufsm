@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/brunocastro/www/personal/mestrado/estrutura_de_dados_para_engenharia/build/02_revisao_funcoes_recursao/01_funcoes_passagem_valor'
+relocations:     []
+...

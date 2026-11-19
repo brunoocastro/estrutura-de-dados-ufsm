@@ -1,0 +1,105 @@
+#!/usr/bin/env bash
+# CLI para compilar e executar os exemplos em C deste repositório.
+# Uso: ./run help
+set -u
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+BUILD_DIR="$ROOT/build"
+CC="${CC:-cc}"
+CFLAGS="${CFLAGS:--Wall -g}"
+LDLIBS="${LDLIBS:--lm}"
+
+usage() {
+  cat <<EOF
+Uso:
+  ./run <arquivo> [args...]   compila (se necessário) e executa
+  ./run build [arquivo]       compila um arquivo, ou todos se omitido
+  ./run list [filtro]         lista os arquivos .c disponíveis
+  ./run clean                 remove a pasta build/
+
+<arquivo> pode ser o caminho (8_grafos/01_grafo.c), o nome (01_grafo.c ou 01_grafo)
+ou um trecho único do caminho (grafo, pilhas/03). Executáveis vão para build/.
+Variáveis opcionais: CC, CFLAGS, LDLIBS.
+EOF
+}
+
+# Lista todos os .c relativos à raiz, ordenados. solucoes_privadas/ fica fora da busca por
+# nome (evita ambiguidade), mas ainda pode ser executada pelo caminho completo.
+all_sources() {
+  (cd "$ROOT" && find . -name '*.c' -not -path './.git/*' -not -path './build/*' \
+    -not -path './solucoes_privadas/*' | sed 's|^\./||' | sort)
+}
+
+# Resolve o argumento para um único caminho .c relativo à raiz.
+resolve() {
+  local query="$1" path matches count
+  query="${query#./}"
+
+  for path in "$query" "$query.c"; do
+    if [ -f "$ROOT/$path" ] && [ "${path##*.}" = "c" ]; then
+      echo "$path"; return 0
+    fi
+  done
+
+  local name="${query%.c}"
+  matches="$(all_sources | awk -v n="$name" '{ b=$0; sub(/.*\//, "", b); sub(/\.c$/, "", b); if (b == n) print }')"
+  [ -z "$matches" ] && matches="$(all_sources | grep -F -- "$query")"
+
+  count="$(printf '%s' "$matches" | grep -c '^' )"
+  if [ "$count" -eq 1 ]; then
+    echo "$matches"; return 0
+  elif [ "$count" -eq 0 ]; then
+    echo "Nenhum arquivo .c corresponde a '$1'." >&2
+  else
+    echo "'$1' é ambíguo. Opções:" >&2
+    printf '  %s\n' $matches >&2
+  fi
+  return 1
+}
+
+# Compila src (relativo à raiz) se o executável estiver ausente ou desatualizado.
+compile() {
+  local src="$1" out="$BUILD_DIR/${1%.c}"
+  if [ ! -x "$out" ] || [ "$ROOT/$src" -nt "$out" ]; then
+    mkdir -p "$(dirname "$out")"
+    # shellcheck disable=SC2086
+    "$CC" $CFLAGS "$ROOT/$src" -o "$out" $LDLIBS || return 1
+  fi
+  echo "$out"
+}
+
+build_all() {
+  local src ok=0 fail=0 failed=""
+  while IFS= read -r src; do
+    if compile "$src" >/dev/null; then
+      ok=$((ok + 1)); echo "ok    $src"
+    else
+      fail=$((fail + 1)); failed="$failed $src"; echo "FALHA $src"
+    fi
+  done < <(all_sources)
+  echo
+  echo "$ok compilados, $fail com falha."
+  [ "$fail" -eq 0 ] || { printf '  %s\n' $failed; return 1; }
+}
+
+cmd="${1:-help}"
+case "$cmd" in
+  help|-h|--help) usage ;;
+  list) all_sources | grep -F -- "${2:-}" ;;
+  clean) rm -rf "$BUILD_DIR" && echo "build/ removido." ;;
+  build)
+    if [ $# -ge 2 ]; then
+      src="$(resolve "$2")" || exit 1
+      compile "$src" >/dev/null && echo "ok    $src -> build/${src%.c}"
+    else
+      build_all
+    fi
+    ;;
+  *)
+    src="$(resolve "$cmd")" || exit 1
+    out="$(compile "$src")" || exit 1
+    shift
+    echo "▶ $src" >&2
+    cd "$(dirname "$ROOT/$src")" && exec "$out" "$@"
+    ;;
+esac

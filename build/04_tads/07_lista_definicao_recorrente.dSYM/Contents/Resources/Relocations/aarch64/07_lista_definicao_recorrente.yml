@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/brunocastro/www/personal/mestrado/estrutura_de_dados_para_engenharia/build/04_tads/07_lista_definicao_recorrente'
+relocations:     []
+...

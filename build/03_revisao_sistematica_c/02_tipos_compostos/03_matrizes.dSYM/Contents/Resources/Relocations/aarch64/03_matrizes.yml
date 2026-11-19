@@ -1,0 +1,5 @@
+---
+triple:          'arm64-apple-darwin'
+binary-path:     '/Users/brunocastro/www/personal/mestrado/estrutura_de_dados_para_engenharia/build/03_revisao_sistematica_c/02_tipos_compostos/03_matrizes'
+relocations:     []
+...
