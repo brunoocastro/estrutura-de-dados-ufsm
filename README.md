@@ -5,30 +5,52 @@ Este repositório possui os conceitos e exemplos de Estrutura de Dados para Enge
 Links úteis:
 
 - [Ementa](EMENTA.md)
+- [Introdução à notação Big O](01_revisao_c_basico/complexidade_big_o.md) — leia antes dos módulos de estruturas
+- [Slides: Árvores, Ordenação, Buscas e Grafos](AULA_ARVORES_E_GRAFOS.md)
+
+## Módulos (na ordem da ementa)
+
+Cada pasta tem um `README.md` com o que a ementa pede, a ordem de estudo recomendada, a tabela de complexidade, exemplos reais e exercícios propostos. Os arquivos `.c` trazem cabeçalho com objetivo, exemplo real e análise Big O. Os arquivos de demonstração mostram o algoritmo **passo a passo** no terminal: tecle ENTER para avançar cada passo.
+
+| Pasta | Ementa | Destaques |
+| --- | --- | --- |
+| [`01_revisao_c_basico`](01_revisao_c_basico/) | Unidade 0 (0.1–0.5) | Big O, teste de mesa de laços, vetores de sensores, matriz de forno, parser serial, L01 e enunciado de T01 |
+| [`02_revisao_funcoes_recursao`](02_revisao_funcoes_recursao/) | Unidade 0 (0.6) | passagem por valor, modularização de controle, primeira recursão, L02 e enunciado de T02 |
+| [`03_revisao_sistematica_c`](03_revisao_sistematica_c/) | Unidade 0 (0.4–0.7) | tipos, vetores, strings, structs, ponteiros, funções, recursão (Hanói, memoização), alocação dinâmica |
+| [`04_tads`](04_tads/) | Unidade 1 | tipos primitivos e padding, TAD opaco (sensor 4–20 mA, TON), duas implementações da mesma interface, definição recorrente |
+| [`05_pilhas`](05_pilhas/) | Unidade 2 | vetor × encadeada, validadores de delimitadores, RPN, shunting-yard, desfazer/refazer de IHM, backtracking de AGV |
+| [`06_filas`](06_filas/) | Unidade 3 | linear × circular, fila encadeada, ring buffer de UART, deque, janela deslizante, round-robin de CLP, enunciado de L04 |
+| [`07_listas`](07_listas/) | Unidade 1.3 (TAD recorrente) | religamento passo a passo, vetor × lista, lista dupla (alarmes), circular (carrossel de IHM), sentinela, enunciado de T05 |
+| [`08_ordenacao_busca`](08_ordenacao_busca/) | Unidade 4 | sequencial × binária, bolha/seleção/inserção, quicksort, merge sort, benchmark, filtro de mediana, estabilidade |
+| [`09_arvores`](09_arvores/) | Unidade 5 | árvore genérica, SCADA, BST (inserção, busca, remoção), percursos, degenerada × balanceada, AVL, heap de alarmes, enunciado de T06 |
+| [`10_grafos`](10_grafos/) | Unidade 6 | matriz × lista, BFS, DFS e ciclos, ordenação topológica, Dijkstra, AGV/PROFINET, árvore geradora mínima |
 
 ## Como compilar e executar
 
-Todos os exemplos são arquivos `.c` independentes. O script [`run`](run) na raiz compila (com `cc -Wall -g ... -lm`) e executa qualquer um deles; os executáveis ficam em `build/`, espelhando a estrutura de pastas.
+Todos os exemplos são arquivos `.c` independentes. O script [`run`](run) na raiz compila (com `cc -Wall -g ... -lm`) e executa qualquer um deles. Os executáveis ficam em `build/`, numa estrutura de pastas igual à do repositório.
 
 ```sh
-./run 01_grafo                    # compila (se necessário) e executa 8_grafos/01_grafo.c
-./run 8_grafos/01_grafo.c         # caminho completo também funciona
-./run 08_args a b c               # argumentos extras são repassados ao programa
-echo 7 | ./run 03_primo           # entrada via stdin
-./run build                       # compila todos os arquivos e mostra um resumo
-./run build 01_arvore             # compila apenas um arquivo
-./run list                        # lista todos os .c
-./run list pilhas                 # lista filtrando por trecho do caminho
-./run clean                       # remove build/
+./run 04_quicksort_visual             # compila (se necessário) e executa 08_ordenacao_busca/04_quicksort_visual.c
+./run 10_grafos/01_grafo.c            # caminho completo também funciona
+./run 04_quicksort_visual < /dev/null # sem pausas: executa direto até o fim
+./run 08_args a b c                   # argumentos extras são repassados ao programa
+echo "SET VEL 120" | ./run 05_strings_comando_serial   # entrada via stdin
+./run build                           # compila todos os arquivos e mostra um resumo
+./run build 01_arvore                 # compila apenas um arquivo
+./run list                            # lista todos os .c
+./run list pilhas                     # lista filtrando por trecho do caminho
+./run clean                           # remove build/
 ```
 
-O nome pode ser o caminho, o nome do arquivo (com ou sem `.c`) ou um trecho único do caminho. Se o trecho corresponder a mais de um arquivo (ex.: `valida_colchetes`), o script lista as opções. Só recompila quando o `.c` é mais recente que o executável. `CC`, `CFLAGS` e `LDLIBS` podem ser sobrescritos: `CC=gcc CFLAGS="-O2" ./run 01_grafo`.
+O nome pode ser o caminho, o nome do arquivo (com ou sem `.c`) ou um trecho único do caminho. Se o trecho corresponder a mais de um arquivo (ex.: `valida`), o script lista as opções. Só recompila quando o `.c` é mais recente que o executável. `CC`, `CFLAGS` e `LDLIBS` podem ser sobrescritos: `CC=gcc CFLAGS="-O2" ./run 01_grafo`.
 
-Para digitar apenas `run <arquivo>`, crie um alias (ex.: no `~/.zshrc`):
+Para digitar apenas `run <arquivo>`, crie um alias apontando para a pasta onde você clonou o repositório (ex.: no `~/.zshrc` ou `~/.bashrc`):
 
 ```sh
-alias run="$HOME/www/personal/mestrado/estrutura_de_dados_para_engenharia/run"
+alias run="$HOME/caminho/para/estrutura-de-dados-ufsm/run"
 ```
+
+No Windows, use o WSL ou o Git Bash. O script precisa de `bash` e de um compilador C (`cc`, `gcc` ou `clang`).
 
 ## Cronograma
 | Data  | Assunto                                               |     |
@@ -92,9 +114,8 @@ Normalmente estamos buscando uma solução "ótima", mas o conceito de ótima é
 
 Só quem entende de estruturas de dados é capaz de modelar uma solução ótima, pois entende como os dados são estruturados na raiz da linguagem, na memória do computador, e sabe avaliar quais são as melhores estruturas para cada problema.
 
-# [Variáveis](0_revisao/variaveis.md)
-# [Estruturas de Controle](0_revisao/estruturas_de_controle.md)
+## Por onde começar
 
-# [Listas encadeadas](6_listas/README.md)
-# [Árvores](7_arvores/README.md)
-# [Grafos](8_grafos/README.md)
+1. [Variáveis](01_revisao_c_basico/variaveis.md) e [Estruturas de Controle](01_revisao_c_basico/estruturas_de_controle.md)
+2. [Notação Big O](01_revisao_c_basico/complexidade_big_o.md)
+3. Siga a tabela de [módulos](#módulos-na-ordem-da-ementa) em ordem; cada `README.md` indica a sequência de arquivos.

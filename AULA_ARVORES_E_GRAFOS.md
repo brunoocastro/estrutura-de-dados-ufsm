@@ -1,7 +1,7 @@
 # Slides: Árvores, Ordenação, Buscas e Grafos
 
 > **UFSM00064 — Estrutura de Dados** | Engenharia de Controle e Automação — UFSM  
-> **Versão em PDF ricamente ilustrada:** [`AULA_ARVORES_E_GRAFOS.pdf`](AULA_ARVORES_E_GRAFOS.pdf)
+> Os códigos estão em [`09_arvores/`](09_arvores/) e [`10_grafos/`](10_grafos/); execute-os com `./run`.
 
 ---
 
@@ -318,46 +318,39 @@ typedef struct No {                            typedef struct No {
 
 ---
 
-## Slide 19 — Parte 5: Solução dos Problemas 1 e 2 (Código em C)
+## Slide 19 — Parte 5: Perguntas-guia para os Problemas 1 e 2
 
 ```text
-  SOLUÇÃO PROBLEMA 1: Pós-Ordem (Filhos antes do Pai)    SOLUÇÃO PROBLEMA 2: ABB (Busca + Em-Ordem)
-              [3º: Pai]  <-- free() por último!                      [50]
-               /     \                                              /    \
-        [1º: Esq]   [2º: Dir] <-- free() antes!                  [30]    [70]
+  PROBLEMA 1: Remover um ramo com segurança          PROBLEMA 2: Buscar, inserir e listar em ordem
+              [ ? ]  <-- quando liberar o pai?                       [50]
+               /   \                                                /    \
+          [ ? ]   [ ? ]  <-- e os filhos?                        [30]    [70]
 ```
 
-```c
-/* Problema 1: 7_arvores/03_t06_delete.c */    /* Problema 2: 7_arvores/02_arvore_binaria.c */
-void libera_ramo(No *r) {                      /* Busca/Insere: O(log n) descartando metade  */
-    if (r == NULL) return;                     /* Relatório ordenado O(n):                   */
-    libera_ramo(r->esquerda);  /* 1º */        void em_ordem(const No *r) {
-    libera_ramo(r->direita);   /* 2º */            if (!r) return;
-    free(r);                   /* 3º */            em_ordem(r->esquerda);
-}                                                  printf("%d ", r->valor);
-                                                   em_ordem(r->direita);
-                                               }
-```
+- **P1:** Em que ordem os nós precisam ser visitados para que nenhum ponteiro se perca antes do `free`?
+  Qual dos percursos (pré, em, pós-ordem) garante isso? Quem precisa receber `NULL` no final?
+- **P2:** Por que a ABB descarta metade dos dados a cada comparação *só quando está balanceada*?
+  Qual percurso imprime os valores em ordem crescente?
+- Estude: [`09_arvores/06_percursos_arvore.c`](09_arvores/06_percursos_arvore.c),
+  [`09_arvores/04_bst_insercao_busca.c`](09_arvores/04_bst_insercao_busca.c) e
+  [`09_arvores/07_bst_degenerada_vs_balanceada.c`](09_arvores/07_bst_degenerada_vs_balanceada.c).
 
 ---
 
-## Slide 20 — Solução dos Problemas 3 e 4 (Código em C)
+## Slide 20 — Perguntas-guia para os Problemas 3 e 4
 
-```text
-  SOLUÇÃO PROBLEMA 3: Dijkstra no Mapa do RS (8_grafos/03_t06_mapa_rodoviario.c)
-  ✅ MENOR ROTA (68 km): Santa Maria --30--> Trevo SM --6--> Recanto Maestro --19--> São Miguel --5--> Mosquito --8--> Agudo
-  ❌ ROTA POR DONA FRANCISCA (89 km): ... Recanto Maestro --14--> São João --5--> Faxinal --10--> D. Francisca --10--> Agudo
-
-  SOLUÇÃO PROBLEMA 4: Automação Industrial
-  • Desafio 4A (SCADA ISA-95)  --> ÁRVORE + Percurso em PÓS-ORDEM (desliga/soma filhos antes da Área).
-  • Desafio 4B (AGV / PROFINET)--> GRAFO  + BFS / DIJKSTRA (marca visitado[] e acha rota alternativa no anel/malha).
-```
+- **P3 (mapa do RS):** BFS encontra o caminho com menos cidades; ele é também o de menor km?
+  Monte a tabela distância/predecessor de Dijkstra à mão a partir de Santa Maria antes de programar.
+- **P4A (SCADA ISA-95):** Para desligar uma área e somar a potência, os filhos precisam ser
+  processados antes ou depois do pai?
+- **P4B (AGV / PROFINET):** O que muda na busca quando um corredor/cabo é removido do grafo?
+  Por que `visitado[]` é obrigatório aqui e não era na árvore?
 
 ```bash
-# Executar demonstrações em aula (todos os 4 problemas):
-gcc -std=c11 -Wall -Wextra -pedantic 7_arvores/03_t06_delete.c -o /tmp/p1 && /tmp/p1
-gcc -std=c11 -Wall -Wextra -pedantic 7_arvores/02_arvore_binaria.c -o /tmp/p2 && /tmp/p2
-gcc -std=c11 -Wall -Wextra -pedantic 8_grafos/03_t06_mapa_rodoviario.c -o /tmp/p3 && /tmp/p3 "Santa Maria" "Agudo"
-gcc -std=c11 -Wall -Wextra -pedantic 7_arvores/05_automacao_scada.c -o /tmp/p4a && /tmp/p4a
-gcc -std=c11 -Wall -Wextra -pedantic 8_grafos/04_automacao_agv_profinet.c -o /tmp/p4b && /tmp/p4b
+# Demonstrações usadas em aula (compilam em build/ e executam passo a passo):
+./run 09_arvores/02_automacao_scada.c
+./run 09_arvores/03_arvore_binaria.c
+./run 10_grafos/04_bfs_saltos_rede.c
+./run 10_grafos/08_dijkstra_latencia_rede.c
+./run 10_grafos/09_automacao_agv_profinet.c
 ```

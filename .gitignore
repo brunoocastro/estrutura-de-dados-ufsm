@@ -1,4 +1,4 @@
-# Compiled files and build artifacts
+# Compiled files and build artifacts (./run compila para build/)
 build/
 *.o
 *.out
@@ -9,7 +9,10 @@ build/
 *.app
 *.dSYM/
 
-# Educational extensionless executables
-3_revisao_sistematica_c/**/[0-9][0-9]_*
-4_pilhas/[0-9][0-9]_*
+# Executáveis sem extensão gerados ao compilar manualmente dentro das pastas
+# (ex.: gcc 01_pilha_array.c -o 01_pilha_array). Pastas e arquivos com
+# extensão continuam versionados.
+[0-9][0-9]_*
+!*/
+!*.*
 
