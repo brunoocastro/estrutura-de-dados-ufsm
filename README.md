@@ -66,9 +66,8 @@ No Windows, use o WSL ou o Git Bash. O script precisa de `bash` e de um compilad
 | 8/10  | Grafos                                                |     |
 | 15/10 | Ordenação                                             |     |
 | 22/10 | Aplicações                                            |     |
-| 5/11  | Projetos finais                                       |     |
-| 19/11 | Projetos finais                                       |     |
-| 26/11 | Avaliação                                             |     |
+| 5/11  | Revisão final                                         |     |
+| 19/11 | Tira dúvidas                                          |     |
 
 ---
 
