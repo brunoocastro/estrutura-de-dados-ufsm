@@ -181,3 +181,17 @@ Modela a hierarquia de ativos de uma planta segundo a norma ISA-95 / endereçame
 gcc -std=c11 -Wall -Wextra -pedantic 7_arvores/05_automacao_scada.c -o /tmp/05_automacao_scada
 /tmp/05_automacao_scada
 ```
+
+## Formas de Armazenar, Inserir, Remover e Ordenar: [`06_formas_arvore.c`](06_formas_arvore.c)
+
+Compara em um único programa comentado linha a linha as variações de implementação em árvores:
+
+1. **Armazenamento em Vetor Estático**: árvore binária sem ponteiros (`pai = (i-1)/2`, `esq = 2i+1`, `dir = 2i+2`), com inserção por nível em `O(1)`.
+2. **Fila de Prioridade / Min-Heap em Vetor**: inserção com `sift_up`, remoção da raiz com `sift_down` e ordenação via *Heap Sort* (`O(n log n)`).
+3. **ABB Iterativa e Ordenação**: inserção sem recursão (usando ponteiro duplo `NoBin **`) e listagem em ordem **crescente** (`Esq -> Raiz -> Dir`) e **decrescente** (`Dir -> Raiz -> Esq`).
+4. **Remoção em Árvore Genérica**: remove um nó (e sua subárvore) religando o ponteiro `proximo_irmao` para preservar os irmãos seguintes.
+
+```bash
+gcc -std=c11 -Wall -Wextra -pedantic 7_arvores/06_formas_arvore.c -o /tmp/06_formas_arvore
+/tmp/06_formas_arvore
+```

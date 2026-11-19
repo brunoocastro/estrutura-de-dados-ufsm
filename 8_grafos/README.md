@@ -145,3 +145,18 @@ Modela a topologia de chão de fábrica como **grafo não dirigido ponderado** p
 gcc -std=c11 -Wall -Wextra -pedantic 8_grafos/04_automacao_agv_profinet.c -o /tmp/04_automacao_agv_profinet
 /tmp/04_automacao_agv_profinet
 ```
+
+## Formas de Armazenar, Inserir, Remover, Percorrer e Ordenar: [`05_formas_grafo.c`](05_formas_grafo.c)
+
+Compara lado a lado em um único programa comentado linha a linha as variações de implementação em grafos:
+
+1. **As 3 Formas de Armazenar o Mesmo Grafo**: Matriz de Adjacência (`O(V²)`), Lista de Adjacência (`O(V + E)`) e Lista/Vetor de Arestas (`O(E)`).
+2. **Ordenação de Arestas por Peso**: ordena o vetor de arestas da menor para a maior (base para algoritmos de Árvore Geradora Mínima como Kruskal).
+3. **DFS Iterativa com Pilha Explícita**: percurso em profundidade sem recursão, empilhando e desempilhando vértices manualmente.
+4. **Remoção Completa de um Vértice**: desativa o vértice e remove tanto as arestas que saem dele quanto as arestas de outros vértices que chegam nele.
+5. **Ordenação Topológica em DAG (Algoritmo de Kahn)**: usa o grau de entrada e uma fila para determinar uma ordem válida de execução de etapas de automação com pré-requisitos.
+
+```bash
+gcc -std=c11 -Wall -Wextra -pedantic 8_grafos/05_formas_grafo.c -o /tmp/05_formas_grafo
+/tmp/05_formas_grafo
+```
