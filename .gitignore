@@ -1,4 +1,5 @@
 # Compiled files and build artifacts
+build/
 *.o
 *.out
 *.a

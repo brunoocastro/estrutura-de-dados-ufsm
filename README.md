@@ -6,6 +6,30 @@ Links úteis:
 
 - [Ementa](EMENTA.md)
 
+## Como compilar e executar
+
+Todos os exemplos são arquivos `.c` independentes. O script [`run`](run) na raiz compila (com `cc -Wall -g ... -lm`) e executa qualquer um deles; os executáveis ficam em `build/`, espelhando a estrutura de pastas.
+
+```sh
+./run 01_grafo                    # compila (se necessário) e executa 8_grafos/01_grafo.c
+./run 8_grafos/01_grafo.c         # caminho completo também funciona
+./run 08_args a b c               # argumentos extras são repassados ao programa
+echo 7 | ./run 03_primo           # entrada via stdin
+./run build                       # compila todos os arquivos e mostra um resumo
+./run build 01_arvore             # compila apenas um arquivo
+./run list                        # lista todos os .c
+./run list pilhas                 # lista filtrando por trecho do caminho
+./run clean                       # remove build/
+```
+
+O nome pode ser o caminho, o nome do arquivo (com ou sem `.c`) ou um trecho único do caminho. Se o trecho corresponder a mais de um arquivo (ex.: `valida_colchetes`), o script lista as opções. Só recompila quando o `.c` é mais recente que o executável. `CC`, `CFLAGS` e `LDLIBS` podem ser sobrescritos: `CC=gcc CFLAGS="-O2" ./run 01_grafo`.
+
+Para digitar apenas `run <arquivo>`, crie um alias (ex.: no `~/.zshrc`):
+
+```sh
+alias run="$HOME/www/personal/mestrado/estrutura_de_dados_para_engenharia/run"
+```
+
 ## Cronograma
 | Data  | Assunto                                               |     |
 | ----- | ----------------------------------------------------- | --- |
