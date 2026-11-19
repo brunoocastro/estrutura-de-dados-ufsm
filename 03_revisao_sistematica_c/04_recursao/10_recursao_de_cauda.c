@@ -45,7 +45,7 @@ static uintptr_t endereco_base = 0;  /* endereço da local no primeiro quadro */
 static unsigned maior_profundidade = 0;
 
 /* Quadros "didáticos" para desenhar a pilha. */
-static char pendente[MAX_DESENHO][48];
+static char pendente[MAX_DESENHO][80];
 static int topo = -1;
 
 /* Pausa até o aluno teclar ENTER; não faz nada se a entrada não for um terminal. */

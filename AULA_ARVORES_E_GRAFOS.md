@@ -1,7 +1,7 @@
 # Slides: Árvores, Ordenação, Buscas e Grafos
 
 > **UFSM00064 — Estrutura de Dados** | Engenharia de Controle e Automação — UFSM  
-> Os códigos estão em [`09_arvores/`](09_arvores/) e [`10_grafos/`](10_grafos/); execute-os com `./run`.
+> **Versão em PDF ilustrada:** [`AULA_ARVORES_E_GRAFOS.pdf`](AULA_ARVORES_E_GRAFOS.pdf) | Os códigos estão em [`09_arvores/`](09_arvores/) e [`10_grafos/`](10_grafos/) (execute com `./run`).
 
 ---
 

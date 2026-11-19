@@ -50,7 +50,7 @@ static int topo = -1; /* -1 = pilha vazia (só main) */
 /* O(profundidade): desenha a pilha com o topo em cima. Cada linha da caixa
  * é montada com snprintf para que todas tenham a mesma largura. */
 static void desenha_pilha(void) {
-    char linha[64];
+    char linha[96];
     printf("        pilha (topo em cima):\n");
     printf("        +------------------------------------------+\n");
     for (int i = topo; i >= 0; i--) {
